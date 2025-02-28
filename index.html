@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur d'Icônes Bauhaus</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-controls">
+        <div class="language-selector">
+            <select id="language-select"></select>
+        </div>
+        <div class="theme-toggle">
+            <button id="theme-toggle">Mode sombre</button>
+        </div>
+    </div>
+    
+    <h1 id="app-title">Générateur d'Icônes Bauhaus</h1>
+    
+    <div class="container">
+        <div class="editor">
+            <div class="form-group">
+                <label for="base-shape" id="base-shape-label">Forme de base</label>
+                <select id="base-shape">
+                    <option value="circle">Cercle</option>
+                    <option value="square">Carré</option>
+                    <option value="diamond">Losange</option>
+                    <option value="triangle">Triangle</option>
+                    <option value="cross">Croix</option>
+                    <option value="hexagon">Hexagone</option>
+                    <option value="star">Étoile</option>
+                    <option value="semicircle">Demi-cercle</option>
+                </select>
+                
+                <div class="slider-container">
+                    <label for="base-roundness" id="base-roundness-label">Arrondi:</label>
+                    <input type="range" id="base-roundness" min="0" max="50" value="0">
+                    <span id="base-roundness-value">0%</span>
+                </div>
+                
+                <div class="slider-container">
+                    <label for="base-rotation" id="base-rotation-label">Rotation:</label>
+                    <input type="range" id="base-rotation" min="0" max="360" value="0">
+                    <span id="base-rotation-value">0°</span>
+                </div>
+            </div>
+            
+            <div class="inner-elements">
+                <label id="inner-elements-label">Éléments intérieurs</label>
+                <div id="elements-list">
+                    <!-- Les éléments seront ajoutés ici dynamiquement -->
+                </div>
+                
+                <div class="form-group">
+                    <div class="compact-row">
+                        <div>
+                            <label for="element-type" id="element-type-label">Type d'élément</label>
+                            <select id="element-type">
+                                <option value="circle">Rond</option>
+                                <option value="circleOutline">Cercle</option>
+                                <option value="square">Carré</option>
+                                <option value="diamond">Losange</option>
+                                <option value="triangle">Triangle</option>
+                                <option value="line">Ligne</option>
+                                <option value="cross">Croix</option>
+                                <option value="dot">Point</option>
+                                <option value="arc">Arc</option>
+                                <option value="zigzag">Zigzag</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button id="add-element">Ajouter</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="preview">
+            <h2 id="preview-label">Aperçu</h2>
+            <div class="preview-container">
+                <svg id="icon-preview" width="150" height="150" viewBox="0 0 100 100"></svg>
+            </div>
+            
+            <textarea id="icon-code" class="icon-code" placeholder="Code de l'icône" readonly></textarea>
+            
+            <div class="storage-buttons">
+                <button id="export-svg">Exporter SVG</button>
+                <button id="save-icon">Sauvegarder</button>
+            </div>
+            
+            <div class="storage-buttons">
+                <button id="load-icon">Charger</button>
+                <button id="export-json">Exporter JSON</button>
+                <button id="import-json">Importer JSON</button>
+            </div>
+            
+            <h2 id="saved-icons-label">Icônes sauvegardées</h2>
+            <div id="saved-icons-list" class="saved-icons">
+                <!-- Les icônes sauvegardées seront affichées ici -->
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="js/app.js"></script>
+</body>
+</html> 
