@@ -46,6 +46,36 @@ function initDOMReferences() {
     savedIconsList = document.getElementById('saved-icons-list');
     themeToggleBtn = document.getElementById('theme-toggle');
     languageSelect = document.getElementById('language-select');
+    
+    // Initialiser la grille
+    initGrid();
+}
+
+// Initialiser la grille
+function initGrid() {
+    const showGridCheckbox = document.getElementById('show-grid');
+    const previewContainer = document.querySelector('.preview-container');
+    const showGridLabel = document.getElementById('show-grid-label');
+    
+    // Restaurer l'état de la grille
+    const showGrid = localStorage.getItem('show_grid') === 'true';
+    showGridCheckbox.checked = showGrid;
+    if (showGrid) {
+        previewContainer.classList.add('show-grid');
+    }
+    
+    // Mettre à jour le texte du label
+    showGridLabel.textContent = getTranslation('showGrid');
+    
+    // Gérer le changement d'état de la grille
+    showGridCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            previewContainer.classList.add('show-grid');
+        } else {
+            previewContainer.classList.remove('show-grid');
+        }
+        localStorage.setItem('show_grid', this.checked);
+    });
 }
 
 // Mettre à jour l'affichage de la valeur d'arrondi de base
@@ -154,7 +184,12 @@ function renderSavedIcons(loadCallback) {
         return;
     }
     
-    for (const id in savedIcons) {
+    // Trier les icônes par date (plus récentes en premier)
+    const sortedIds = Object.keys(savedIcons).sort((a, b) => {
+        return new Date(savedIcons[b].date) - new Date(savedIcons[a].date);
+    });
+    
+    for (const id of sortedIds) {
         const icon = savedIcons[id];
         const date = new Date(icon.date).toLocaleDateString();
         
@@ -164,12 +199,14 @@ function renderSavedIcons(loadCallback) {
         // Créer le conteneur pour l'aperçu et le texte
         const infoContainer = document.createElement('div');
         infoContainer.className = 'saved-icon-info';
-        infoContainer.style.display = 'flex';
-        infoContainer.style.alignItems = 'center';
         
         // Ajouter l'aperçu SVG
-        const preview = createIconPreview(icon.code);
-        infoContainer.appendChild(preview);
+        try {
+            const preview = createIconPreview(icon.code);
+            infoContainer.appendChild(preview);
+        } catch (error) {
+            console.error('Erreur lors de la création de l\'aperçu:', error);
+        }
         
         // Ajouter le texte
         const textSpan = document.createElement('span');
@@ -180,10 +217,20 @@ function renderSavedIcons(loadCallback) {
         
         // Ajouter les boutons
         const buttonsDiv = document.createElement('div');
-        buttonsDiv.innerHTML = `
-            <button onclick="window.loadSavedIcon('${id}')">${getTranslation('load')}</button>
-            <button onclick="window.deleteSavedIcon('${id}')" class="remove-btn">X</button>
-        `;
+        buttonsDiv.style.display = 'flex';
+        buttonsDiv.style.gap = '5px';
+        
+        const loadButton = document.createElement('button');
+        loadButton.textContent = getTranslation('load');
+        loadButton.onclick = () => window.loadSavedIcon(id);
+        
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'X';
+        deleteButton.className = 'remove-btn';
+        deleteButton.onclick = () => window.deleteSavedIcon(id);
+        
+        buttonsDiv.appendChild(loadButton);
+        buttonsDiv.appendChild(deleteButton);
         
         iconItem.appendChild(buttonsDiv);
         savedIconsList.appendChild(iconItem);
@@ -334,6 +381,9 @@ function translateUI() {
     // Labels des éléments intérieurs
     document.getElementById('inner-elements-label').textContent = getTranslation('innerElements');
     document.getElementById('element-type-label').textContent = getTranslation('elementType');
+    
+    // Label de la grille
+    document.getElementById('show-grid-label').textContent = getTranslation('showGrid');
     
     // Boutons
     document.getElementById('add-element').textContent = getTranslation('add');

@@ -72,12 +72,54 @@ h2 {
     justify-content: center;
     align-items: center;
     border: 1px dashed #ddd;
-    background-color: white; /* Toujours blanc même en mode sombre */
+    background-color: white;
+    position: relative;
 }
 
-.dark-mode .preview-container {
-    border-color: #555;
+.preview-container.show-grid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: 18px 18px; /* 10% de 180px */
+    pointer-events: none;
+    z-index: 1;
 }
+
+.preview-container.show-grid::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(to right, rgba(0,0,0,0.2) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,0.2) 1px, transparent 1px);
+    background-size: 90px 90px; /* 50% de 180px */
+    pointer-events: none;
+    z-index: 1;
+}
+
+.grid-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+}
+
+.grid-toggle input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+
 
 .form-group {
     margin-bottom: 10px;

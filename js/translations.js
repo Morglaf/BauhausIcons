@@ -32,6 +32,7 @@ const translations = {
         width: "Largeur",
         height: "Hauteur",
         rotation: "Rotation",
+        showGrid: "Afficher la grille",
         // Formes
         circle: "Rond",
         circleOutline: "Cercle",
@@ -80,6 +81,7 @@ const translations = {
         width: "Width",
         height: "Height",
         rotation: "Rotation",
+        showGrid: "Show Grid",
         // Shapes
         circle: "Filled Circle",
         circleOutline: "Circle Outline",
@@ -128,6 +130,7 @@ const translations = {
         width: "Breite",
         height: "Höhe",
         rotation: "Drehung",
+        showGrid: "Raster anzeigen",
         // Formen
         circle: "Gefüllter Kreis",
         circleOutline: "Kreisumriss",
@@ -176,6 +179,7 @@ const translations = {
         width: "Ancho",
         height: "Alto",
         rotation: "Rotación",
+        showGrid: "Mostrar Cuadrícula",
         // Formas
         circle: "Círculo Relleno",
         circleOutline: "Contorno de Círculo",

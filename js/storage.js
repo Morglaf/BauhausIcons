@@ -2,193 +2,130 @@
  * Fonctions pour la gestion du stockage des icônes
  */
 
-// Générer le code de l'icône à partir des paramètres
+// Clé de stockage dans le localStorage
+const STORAGE_KEY = 'bauhaus_icons';
+
+// Générer un code compact pour une icône
 function generateIconCode(baseShape, baseRoundness, baseRotation, elements) {
-    // Vérifier les types d'éléments valides
-    const validTypes = [
-        'circle', 'circleOutline', 'square', 'diamond', 'triangle', 
-        'line', 'cross', 'dot', 'arc', 'zigzag', 'hexagon', 'star', 'semicircle'
-    ];
+    // Format: baseShape:roundness:rotation|elem1Type:x:y:w:h:r:rnd|elem2...
+    let code = `${baseShape}:${baseRoundness}:${baseRotation}`;
     
-    // Filtrer les éléments avec des types valides
-    const validElements = elements.filter(el => validTypes.includes(el.type));
+    elements.forEach(elem => {
+        code += `|${elem.type}:${elem.x}:${elem.y}:${elem.width}:${elem.height}:${elem.rotation}:${elem.roundness || 0}`;
+    });
     
-    // Créer l'objet de données de l'icône
-    const iconData = {
+    return code;
+}
+
+// Analyser un code d'icône pour recréer l'objet
+function parseIconCode(code) {
+    const parts = code.split('|');
+    const baseInfo = parts[0].split(':');
+    
+    const baseShape = baseInfo[0];
+    const baseRoundness = parseInt(baseInfo[1]);
+    // Gérer la compatibilité avec les anciens codes d'icône qui n'ont pas de rotation
+    const baseRotation = baseInfo.length > 2 ? parseInt(baseInfo[2]) : 0;
+    
+    const elements = [];
+    
+    for (let i = 1; i < parts.length; i++) {
+        const elemParts = parts[i].split(':');
+        elements.push({
+            id: i,
+            type: elemParts[0],
+            x: parseInt(elemParts[1]),
+            y: parseInt(elemParts[2]),
+            width: parseInt(elemParts[3]),
+            height: parseInt(elemParts[4]),
+            rotation: parseInt(elemParts[5]),
+            roundness: parseInt(elemParts[6])
+        });
+    }
+    
+    return {
         baseShape,
         baseRoundness,
         baseRotation,
-        elements: validElements.map(el => ({
-            type: el.type,
-            x: el.x,
-            y: el.y,
-            width: el.width,
-            height: el.height,
-            rotation: el.rotation || 0,
-            roundness: el.roundness || 0
-        }))
+        elements
     };
-    
-    // Convertir en JSON et encoder en base64
-    return btoa(JSON.stringify(iconData));
 }
 
-// Analyser le code de l'icône
-function parseIconCode(code) {
-    try {
-        // Décoder le base64 et parser le JSON
-        const jsonData = atob(code);
-        const iconData = JSON.parse(jsonData);
-        
-        // Vérifier la structure des données
-        if (!iconData.baseShape || !Array.isArray(iconData.elements)) {
-            throw new Error('Invalid icon data structure');
-        }
-        
-        // Ajouter des valeurs par défaut si nécessaire
-        iconData.baseRoundness = iconData.baseRoundness || 0;
-        iconData.baseRotation = iconData.baseRotation || 0;
-        
-        // Vérifier et corriger les éléments
-        iconData.elements = iconData.elements.map(el => ({
-            type: el.type || 'circle',
-            x: el.x || 50,
-            y: el.y || 50,
-            width: el.width || 30,
-            height: el.height || 30,
-            rotation: el.rotation || 0,
-            roundness: el.roundness || 0
-        }));
-        
-        return iconData;
-    } catch (error) {
-        console.error('Error parsing icon code:', error);
-        throw new Error('Invalid icon code');
-    }
-}
-
-// Sauvegarder une icône dans le stockage local
-function saveIcon(name, code) {
-    // Récupérer les icônes existantes
-    const savedIcons = getSavedIcons();
+// Sauvegarder une icône dans le localStorage
+function saveIcon(name, iconCode) {
+    let savedIcons = getSavedIcons();
     
     // Générer un ID unique
     const id = Date.now().toString();
     
-    // Ajouter la nouvelle icône
     savedIcons[id] = {
         name,
-        code,
+        code: iconCode,
         date: new Date().toISOString()
     };
     
-    // Sauvegarder dans le stockage local
-    localStorage.setItem('bauhaus_icons', JSON.stringify(savedIcons));
-    
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedIcons));
     return id;
 }
 
-// Récupérer les icônes sauvegardées
+// Récupérer toutes les icônes sauvegardées
 function getSavedIcons() {
-    const savedIconsJson = localStorage.getItem('bauhaus_icons');
-    
-    if (savedIconsJson) {
-        try {
-            return JSON.parse(savedIconsJson);
-        } catch (error) {
-            console.error('Error parsing saved icons:', error);
-            return {};
-        }
-    }
-    
-    return {};
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : {};
 }
 
 // Supprimer une icône
 function deleteIcon(id) {
-    const savedIcons = getSavedIcons();
+    let savedIcons = getSavedIcons();
     
     if (savedIcons[id]) {
         delete savedIcons[id];
-        localStorage.setItem('bauhaus_icons', JSON.stringify(savedIcons));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(savedIcons));
         return true;
     }
     
     return false;
 }
 
-// Exporter les icônes au format JSON
+// Exporter toutes les icônes dans un fichier JSON
 function exportIconsToJSON() {
     const savedIcons = getSavedIcons();
+    const dataStr = JSON.stringify(savedIcons, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
     
-    if (Object.keys(savedIcons).length === 0) {
-        alert('No saved icons to export');
-        return;
-    }
-    
-    const jsonData = JSON.stringify(savedIcons, null, 2);
-    const blob = new Blob([jsonData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    
-    const downloadLink = document.createElement('a');
-    downloadLink.href = url;
-    downloadLink.download = 'bauhaus_icons.json';
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'bauhaus_icons.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 // Importer des icônes depuis un fichier JSON
 function importIconsFromJSON(jsonData) {
     try {
         const importedIcons = JSON.parse(jsonData);
-        const savedIcons = getSavedIcons();
+        let savedIcons = getSavedIcons();
         
-        // Vérifier la structure des données importées
-        let validIconsCount = 0;
+        // Fusionner les icônes importées avec les existantes
+        savedIcons = { ...savedIcons, ...importedIcons };
         
-        for (const id in importedIcons) {
-            const icon = importedIcons[id];
-            
-            if (icon.name && icon.code) {
-                // Vérifier que le code est valide
-                try {
-                    parseIconCode(icon.code);
-                    
-                    // Ajouter l'icône avec un nouvel ID
-                    const newId = Date.now().toString() + validIconsCount;
-                    savedIcons[newId] = {
-                        name: icon.name,
-                        code: icon.code,
-                        date: icon.date || new Date().toISOString()
-                    };
-                    
-                    validIconsCount++;
-                } catch (error) {
-                    console.warn('Skipping invalid icon:', icon.name);
-                }
-            }
-        }
-        
-        if (validIconsCount > 0) {
-            localStorage.setItem('bauhaus_icons', JSON.stringify(savedIcons));
-            return true;
-        }
-        
-        return false;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(savedIcons));
+        return true;
     } catch (error) {
-        console.error('Error importing icons:', error);
+        console.error('Erreur lors de l\'importation des icônes:', error);
         return false;
     }
 }
 
 // Exporter les fonctions
-export {
-    generateIconCode,
-    parseIconCode,
-    saveIcon,
-    getSavedIcons,
-    deleteIcon,
-    exportIconsToJSON,
-    importIconsFromJSON
+export { 
+    generateIconCode, 
+    parseIconCode, 
+    saveIcon, 
+    getSavedIcons, 
+    deleteIcon, 
+    exportIconsToJSON, 
+    importIconsFromJSON 
 };
