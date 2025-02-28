@@ -17,7 +17,8 @@ import {
     duplicateElement,
     toggleTheme,
     initTheme,
-    initLanguage
+    initLanguage,
+    resetIcon
 } from './ui.js';
 
 import { addBaseShape, addInnerElement } from './shapes.js';
@@ -128,6 +129,16 @@ function addEventListeners() {
     document.getElementById('theme-toggle').addEventListener('click', function() {
         toggleTheme();
     });
+    
+    // Écouteur pour le bouton de réinitialisation
+    document.getElementById('reset-icon').addEventListener('click', function() {
+        if (resetIcon()) {
+            elements = [];
+            nextElementId = 0;
+            renderElementsList(elements, updateElementProperty, removeElement);
+            renderIcon();
+        }
+    });
 }
 
 // Ajouter un nouvel élément
@@ -167,6 +178,15 @@ function updateElementProperty(id, property, value, inputElement) {
         element[property] = value;
     } else {
         element[property] = parseInt(value);
+    }
+    
+    // Si c'est un cercle et qu'on modifie la largeur ou la hauteur, synchroniser les deux
+    if ((element.type === 'circle' || element.type === 'circleOutline') && (property === 'width' || property === 'height')) {
+        if (property === 'width') {
+            element.height = element.width;
+        } else {
+            element.width = element.height;
+        }
     }
     
     // Mettre à jour l'affichage de la valeur si nécessaire

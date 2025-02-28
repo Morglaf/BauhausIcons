@@ -71,7 +71,9 @@ const translations = {
         invalidCode: "Code d'icône invalide",
         importSuccess: "Icônes importées avec succès",
         importError: "Erreur lors de l'importation",
-        confirmDelete: "Êtes-vous sûr de vouloir supprimer cette icône ?"
+        confirmDelete: "Êtes-vous sûr de vouloir supprimer cette icône ?",
+        resetIcon: "Réinitialiser",
+        confirmReset: "Êtes-vous sûr de vouloir réinitialiser l'icône ? Tous les éléments seront supprimés."
     },
     
     // Anglais
@@ -138,7 +140,9 @@ const translations = {
         invalidCode: "Invalid icon code",
         importSuccess: "Icons imported successfully",
         importError: "Error importing icons",
-        confirmDelete: "Are you sure you want to delete this icon?"
+        confirmDelete: "Are you sure you want to delete this icon?",
+        resetIcon: "Reset",
+        confirmReset: "Are you sure you want to reset the icon? All elements will be removed."
     },
     
     // Allemand
@@ -205,7 +209,9 @@ const translations = {
         invalidCode: "Ungültiger Symbol-Code",
         importSuccess: "Symbole erfolgreich importiert",
         importError: "Fehler beim Importieren",
-        confirmDelete: "Sind Sie sicher, dass Sie dieses Symbol löschen möchten?"
+        confirmDelete: "Sind Sie sicher, dass Sie dieses Symbol löschen möchten?",
+        resetIcon: "Zurücksetzen",
+        confirmReset: "Sind Sie sicher, dass Sie das Symbol zurücksetzen möchten? Alle Elemente werden entfernt."
     },
     
     // Espagnol
@@ -272,7 +278,9 @@ const translations = {
         invalidCode: "Código de icono inválido",
         importSuccess: "Iconos importados con éxito",
         importError: "Error al importar iconos",
-        confirmDelete: "¿Está seguro de que desea eliminar este icono?"
+        confirmDelete: "¿Está seguro de que desea eliminar este icono?",
+        resetIcon: "Reiniciar",
+        confirmReset: "¿Está seguro de que desea reiniciar el icono? Todos los elementos serán eliminados."
     }
 };
 

@@ -290,6 +290,8 @@ button:hover {
 
 .storage-buttons button {
     flex: 1;
+    font-size: 0.8rem;
+    padding: 5px;
 }
 
 .saved-icons {
@@ -476,4 +478,56 @@ select[id$="-color"] option[value="yellow"] {
         position: static;
         max-height: none;
     }
+}
+
+.element-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.dark-mode .element-title {
+    border-color: #555;
+}
+
+.position-controls, .size-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.numeric-control {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.numeric-control label {
+    font-size: 0.75rem;
+    margin-bottom: 2px;
+}
+
+.numeric-control input {
+    width: 100%;
+    padding: 3px;
+    font-size: 0.8rem;
+}
+
+#reset-icon {
+    background-color: #FF9500;
+    color: white;
+}
+
+.dark-mode #reset-icon {
+    background-color: #CC7700;
+}
+
+#reset-icon:hover {
+    background-color: #CC7700;
+}
+
+.dark-mode #reset-icon:hover {
+    background-color: #FF9500;
 } 

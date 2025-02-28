@@ -110,102 +110,230 @@ function updateBaseRotationValue() {
     return parseInt(baseRotationSlider.value);
 }
 
+// Fonction pour réinitialiser l'icône
+function resetIcon() {
+    if (confirm(getTranslation('confirmReset'))) {
+        // Réinitialiser les valeurs par défaut
+        document.getElementById('base-shape').value = 'square';
+        document.getElementById('base-roundness').value = 0;
+        document.getElementById('base-rotation').value = 0;
+        document.getElementById('base-color').value = 'black';
+        document.getElementById('base-stroke-color').value = 'black';
+        document.getElementById('base-stroke-width').value = 2;
+        document.getElementById('base-has-stroke').checked = true;
+        
+        // Mettre à jour les valeurs affichées
+        updateBaseRoundnessValue();
+        updateBaseRotationValue();
+        
+        // Vider la liste des éléments
+        return true;
+    }
+    return false;
+}
+
 // Mettre à jour la liste des éléments dans l'interface
 function renderElementsList(elements, updateCallback, removeCallback) {
+    const elementsList = document.getElementById('elements-list');
     elementsList.innerHTML = '';
     
     elements.forEach(element => {
         const elementItem = document.createElement('div');
         elementItem.className = 'element-item';
         
-        const innerHTML = `
-            <div class="compact-row">
-                <div>
-                    <label>${getTranslation(element.type)}</label>
-                    <input type="range" min="0" max="100" value="${element.x}" 
-                           onchange="window.updateElementProperty(${element.id}, 'x', this.value, this)">
-                    <span>X: ${element.x}</span>
-                </div>
-                <div>
-                    <label>Y</label>
-                    <input type="range" min="0" max="100" value="${element.y}" 
-                           onchange="window.updateElementProperty(${element.id}, 'y', this.value, this)">
-                    <span>Y: ${element.y}</span>
-                </div>
-            </div>
-            <div class="compact-row">
-                <div>
-                    <label>${getTranslation('width')}</label>
-                    <input type="range" min="5" max="90" value="${element.width}" 
-                           onchange="window.updateElementProperty(${element.id}, 'width', this.value, this)">
-                    <span>${element.width}%</span>
-                </div>
-                <div>
-                    <label>${getTranslation('height')}</label>
-                    <input type="range" min="5" max="90" value="${element.height}" 
-                           onchange="window.updateElementProperty(${element.id}, 'height', this.value, this)">
-                    <span>${element.height}%</span>
-                </div>
-            </div>
-            <div class="compact-row">
-                <div>
-                    <label>${getTranslation('rotation')}</label>
-                    <input type="range" min="0" max="360" value="${element.rotation}" 
-                           onchange="window.updateElementProperty(${element.id}, 'rotation', this.value, this)">
-                    <span>${element.rotation}°</span>
-                </div>
-                <div>
-                    <label>${getTranslation('roundness')}</label>
-                    <input type="range" min="0" max="50" value="${element.roundness || 0}" 
-                           onchange="window.updateElementProperty(${element.id}, 'roundness', this.value, this)">
-                    <span>${element.roundness || 0}%</span>
-                </div>
-            </div>
-            <div class="compact-row">
-                <div>
-                    <label>${getTranslation('elementColor')}</label>
-                    <select onchange="window.updateElementProperty(${element.id}, 'color', this.value)">
-                        <option value="black" ${element.color === 'black' ? 'selected' : ''}>${getTranslation('black')}</option>
-                        <option value="white" ${element.color === 'white' ? 'selected' : ''}>${getTranslation('white')}</option>
-                        <option value="red" ${element.color === 'red' ? 'selected' : ''}>${getTranslation('red')}</option>
-                        <option value="blue" ${element.color === 'blue' ? 'selected' : ''}>${getTranslation('blue')}</option>
-                        <option value="yellow" ${element.color === 'yellow' ? 'selected' : ''}>${getTranslation('yellow')}</option>
-                    </select>
-                </div>
-            </div>
-            <div class="stroke-controls">
-                <div class="compact-row">
-                    <div>
-                        <label>${getTranslation('hasStroke')}</label>
-                        <input type="checkbox" ${element.hasStroke ? 'checked' : ''} 
-                               onchange="window.updateElementProperty(${element.id}, 'hasStroke', this.checked)">
-                    </div>
-                </div>
-                <div class="compact-row">
-                    <div>
-                        <label>${getTranslation('strokeColor')}</label>
-                        <select onchange="window.updateElementProperty(${element.id}, 'strokeColor', this.value)">
-                            <option value="black" ${element.strokeColor === 'black' ? 'selected' : ''}>${getTranslation('black')}</option>
-                            <option value="white" ${element.strokeColor === 'white' ? 'selected' : ''}>${getTranslation('white')}</option>
-                            <option value="red" ${element.strokeColor === 'red' ? 'selected' : ''}>${getTranslation('red')}</option>
-                            <option value="blue" ${element.strokeColor === 'blue' ? 'selected' : ''}>${getTranslation('blue')}</option>
-                            <option value="yellow" ${element.strokeColor === 'yellow' ? 'selected' : ''}>${getTranslation('yellow')}</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>${getTranslation('strokeWidth')}</label>
-                        <input type="number" min="1" max="10" value="${element.strokeWidth || 2}" 
-                               onchange="window.updateElementProperty(${element.id}, 'strokeWidth', this.value)">
-                    </div>
-                </div>
-            </div>
-            <div class="element-controls">
-                <button onclick="window.duplicateElement(${element.id});">${getTranslation('duplicate')}</button>
-                <button onclick="window.removeElement(${element.id});">${getTranslation('remove')}</button>
-            </div>
-        `;
+        // Titre de l'élément
+        const elementTitle = document.createElement('div');
+        elementTitle.className = 'element-title';
+        elementTitle.textContent = `${getTranslation(element.type)} #${element.id + 1}`;
+        elementItem.appendChild(elementTitle);
         
-        elementItem.innerHTML = innerHTML;
+        // Contrôles de position X et Y
+        const positionControls = document.createElement('div');
+        positionControls.className = 'position-controls';
+        
+        // Contrôle X
+        const xControl = document.createElement('div');
+        xControl.className = 'numeric-control';
+        
+        const xLabel = document.createElement('label');
+        xLabel.textContent = 'X:';
+        xControl.appendChild(xLabel);
+        
+        const xInput = document.createElement('input');
+        xInput.type = 'number';
+        xInput.min = '0';
+        xInput.max = '100';
+        xInput.value = element.x;
+        xInput.addEventListener('change', function() {
+            updateCallback(element.id, 'x', parseInt(this.value), this);
+        });
+        xControl.appendChild(xInput);
+        
+        positionControls.appendChild(xControl);
+        
+        // Contrôle Y
+        const yControl = document.createElement('div');
+        yControl.className = 'numeric-control';
+        
+        const yLabel = document.createElement('label');
+        yLabel.textContent = 'Y:';
+        yControl.appendChild(yLabel);
+        
+        const yInput = document.createElement('input');
+        yInput.type = 'number';
+        yInput.min = '0';
+        yInput.max = '100';
+        yInput.value = element.y;
+        yInput.addEventListener('change', function() {
+            updateCallback(element.id, 'y', parseInt(this.value), this);
+        });
+        yControl.appendChild(yInput);
+        
+        positionControls.appendChild(yControl);
+        
+        elementItem.appendChild(positionControls);
+        
+        // Contrôles de taille (largeur et hauteur)
+        const sizeControls = document.createElement('div');
+        sizeControls.className = 'size-controls';
+        
+        // Contrôle de largeur
+        const widthControl = document.createElement('div');
+        widthControl.className = 'numeric-control';
+        
+        const widthLabel = document.createElement('label');
+        widthLabel.textContent = getTranslation('width') + ':';
+        widthControl.appendChild(widthLabel);
+        
+        const widthInput = document.createElement('input');
+        widthInput.type = 'number';
+        widthInput.min = '5';
+        widthInput.max = '100';
+        widthInput.value = element.width;
+        widthInput.addEventListener('change', function() {
+            const newWidth = parseInt(this.value);
+            updateCallback(element.id, 'width', newWidth, this);
+            
+            // Si c'est un cercle, mettre à jour la hauteur également
+            if (element.type === 'circle' || element.type === 'circleOutline') {
+                const heightInput = this.parentElement.parentElement.querySelector('input[type="number"]:nth-of-type(2)');
+                if (heightInput) {
+                    heightInput.value = newWidth;
+                    updateCallback(element.id, 'height', newWidth, heightInput);
+                }
+            }
+        });
+        widthControl.appendChild(widthInput);
+        
+        sizeControls.appendChild(widthControl);
+        
+        // Contrôle de hauteur
+        const heightControl = document.createElement('div');
+        heightControl.className = 'numeric-control';
+        
+        const heightLabel = document.createElement('label');
+        heightLabel.textContent = getTranslation('height') + ':';
+        heightControl.appendChild(heightLabel);
+        
+        const heightInput = document.createElement('input');
+        heightInput.type = 'number';
+        heightInput.min = '5';
+        heightInput.max = '100';
+        heightInput.value = element.height;
+        heightInput.addEventListener('change', function() {
+            const newHeight = parseInt(this.value);
+            updateCallback(element.id, 'height', newHeight, this);
+            
+            // Si c'est un cercle, mettre à jour la largeur également
+            if (element.type === 'circle' || element.type === 'circleOutline') {
+                const widthInput = this.parentElement.parentElement.querySelector('input[type="number"]:nth-of-type(1)');
+                if (widthInput) {
+                    widthInput.value = newHeight;
+                    updateCallback(element.id, 'width', newHeight, widthInput);
+                }
+            }
+        });
+        heightControl.appendChild(heightInput);
+        
+        sizeControls.appendChild(heightControl);
+        
+        elementItem.appendChild(sizeControls);
+        
+        // Contrôle de rotation
+        const rotationControl = document.createElement('div');
+        rotationControl.className = 'slider-container';
+        
+        const rotationLabel = document.createElement('label');
+        rotationLabel.textContent = getTranslation('rotation') + ':';
+        rotationControl.appendChild(rotationLabel);
+        
+        const rotationSlider = document.createElement('input');
+        rotationSlider.type = 'range';
+        rotationSlider.min = '0';
+        rotationSlider.max = '360';
+        rotationSlider.value = element.rotation;
+        rotationSlider.addEventListener('input', function() {
+            updateCallback(element.id, 'rotation', parseInt(this.value), this);
+            rotationValue.textContent = `${this.value}°`;
+            
+            // Mettre à jour l'input numérique
+            if (rotationInput) {
+                rotationInput.value = this.value;
+            }
+        });
+        rotationControl.appendChild(rotationSlider);
+        
+        const rotationValue = document.createElement('span');
+        rotationValue.textContent = `${element.rotation}°`;
+        rotationControl.appendChild(rotationValue);
+        
+        // Ajout d'un input numérique pour la rotation
+        const rotationNumericControl = document.createElement('div');
+        rotationNumericControl.className = 'numeric-control';
+        
+        const rotationNumericLabel = document.createElement('label');
+        rotationNumericLabel.textContent = getTranslation('rotation') + ':';
+        rotationNumericControl.appendChild(rotationNumericLabel);
+        
+        const rotationInput = document.createElement('input');
+        rotationInput.type = 'number';
+        rotationInput.min = '0';
+        rotationInput.max = '360';
+        rotationInput.value = element.rotation;
+        rotationInput.addEventListener('change', function() {
+            const newRotation = parseInt(this.value);
+            updateCallback(element.id, 'rotation', newRotation, this);
+            
+            // Mettre à jour le slider
+            rotationSlider.value = newRotation;
+            rotationValue.textContent = `${newRotation}°`;
+        });
+        rotationNumericControl.appendChild(rotationInput);
+        
+        elementItem.appendChild(rotationControl);
+        elementItem.appendChild(rotationNumericControl);
+        
+        // Contrôles de l'élément (dupliquer, supprimer)
+        const elementControls = document.createElement('div');
+        elementControls.className = 'element-controls';
+        
+        const duplicateBtn = document.createElement('button');
+        duplicateBtn.textContent = getTranslation('duplicate');
+        duplicateBtn.addEventListener('click', function() {
+            window.duplicateElement(element.id);
+        });
+        elementControls.appendChild(duplicateBtn);
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-btn';
+        removeBtn.textContent = getTranslation('remove');
+        removeBtn.addEventListener('click', function() {
+            removeCallback(element.id);
+        });
+        elementControls.appendChild(removeBtn);
+        
+        elementItem.appendChild(elementControls);
+        
         elementsList.appendChild(elementItem);
     });
 }
@@ -558,5 +686,6 @@ export {
     toggleTheme,
     initTheme,
     initLanguage,
+    resetIcon,
     translateUI
 }; 
