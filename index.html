@@ -12,7 +12,7 @@
             <select id="language-select"></select>
         </div>
         <div class="theme-toggle">
-            <button id="theme-toggle">Mode sombre</button>
+            <button id="theme-toggle">Mode Sombre</button>
         </div>
     </div>
     
@@ -21,87 +21,168 @@
     <div class="container">
         <div class="editor">
             <div class="form-group">
-                <label for="base-shape" id="base-shape-label">Forme de base</label>
+                <label id="base-shape-label">Forme de base</label>
                 <select id="base-shape">
-                    <option value="circle">Cercle</option>
                     <option value="square">Carré</option>
-                    <option value="diamond">Losange</option>
+                    <option value="circle">Cercle</option>
                     <option value="triangle">Triangle</option>
-                    <option value="cross">Croix</option>
+                    <option value="diamond">Losange</option>
                     <option value="hexagon">Hexagone</option>
                     <option value="star">Étoile</option>
                     <option value="semicircle">Demi-cercle</option>
+                    <option value="cross">Croix</option>
                 </select>
-                
-                <div class="slider-container">
-                    <label for="base-roundness" id="base-roundness-label">Arrondi:</label>
-                    <input type="range" id="base-roundness" min="0" max="50" value="0">
-                    <span id="base-roundness-value">0%</span>
-                </div>
-                
-                <div class="slider-container">
-                    <label for="base-rotation" id="base-rotation-label">Rotation:</label>
-                    <input type="range" id="base-rotation" min="0" max="360" value="0">
-                    <span id="base-rotation-value">0°</span>
-                </div>
             </div>
             
-            <div class="inner-elements">
-                <label id="inner-elements-label">Éléments intérieurs</label>
-                <div id="elements-list">
-                    <!-- Les éléments seront ajoutés ici dynamiquement -->
-                </div>
-                
+            <div class="form-group">
+                <label id="base-color-label">Couleur de base</label>
+                <select id="base-color">
+                    <option value="black">Noir</option>
+                    <option value="white">Blanc</option>
+                    <option value="red">Rouge</option>
+                    <option value="blue">Bleu</option>
+                    <option value="yellow">Jaune</option>
+                </select>
+            </div>
+            
+            <div class="stroke-controls">
                 <div class="form-group">
                     <div class="compact-row">
                         <div>
-                            <label for="element-type" id="element-type-label">Type d'élément</label>
-                            <select id="element-type">
-                                <option value="circle">Rond</option>
-                                <option value="circleOutline">Cercle</option>
-                                <option value="square">Carré</option>
-                                <option value="diamond">Losange</option>
-                                <option value="triangle">Triangle</option>
-                                <option value="line">Ligne</option>
-                                <option value="cross">Croix</option>
-                                <option value="dot">Point</option>
-                                <option value="arc">Arc</option>
-                                <option value="zigzag">Zigzag</option>
-                            </select>
+                            <label id="base-has-stroke-label">Contour</label>
+                            <input type="checkbox" id="base-has-stroke" checked>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label id="base-stroke-color-label">Couleur du contour</label>
+                    <select id="base-stroke-color">
+                        <option value="black">Noir</option>
+                        <option value="white">Blanc</option>
+                        <option value="red">Rouge</option>
+                        <option value="blue">Bleu</option>
+                        <option value="yellow">Jaune</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label id="base-stroke-width-label">Épaisseur du contour</label>
+                    <input type="number" id="base-stroke-width" min="1" max="10" value="2">
+                </div>
+            </div>
+            
+            <div class="slider-container">
+                <label id="base-roundness-label">Arrondi:</label>
+                <input type="range" id="base-roundness" min="0" max="50" value="0">
+                <span id="base-roundness-value">0%</span>
+            </div>
+            
+            <div class="slider-container">
+                <label id="base-rotation-label">Rotation:</label>
+                <input type="range" id="base-rotation" min="0" max="360" value="0">
+                <span id="base-rotation-value">0°</span>
+            </div>
+            
+            <div class="inner-elements">
+                <h2 id="inner-elements-label">Éléments intérieurs</h2>
+                
+                <div class="form-group">
+                    <label id="element-type-label">Type d'élément</label>
+                    <select id="element-type">
+                        <option value="square">Carré</option>
+                        <option value="circle">Rond</option>
+                        <option value="circleOutline">Cercle contour</option>
+                        <option value="triangle">Triangle</option>
+                        <option value="diamond">Losange</option>
+                        <option value="line">Ligne</option>
+                        <option value="arc">Arc</option>
+                        <option value="zigzag">Zigzag</option>
+                        <option value="dot">Point</option>
+                        <option value="cross">Croix</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label id="element-color-label">Couleur de l'élément</label>
+                    <select id="element-color">
+                        <option value="black">Noir</option>
+                        <option value="white">Blanc</option>
+                        <option value="red">Rouge</option>
+                        <option value="blue">Bleu</option>
+                        <option value="yellow">Jaune</option>
+                    </select>
+                </div>
+                
+                <div class="stroke-controls">
+                    <div class="form-group">
+                        <div class="compact-row">
+                            <div>
+                                <label id="element-has-stroke-label">Contour</label>
+                                <input type="checkbox" id="element-has-stroke">
+                            </div>
                         </div>
                     </div>
                     
-                    <button id="add-element">Ajouter</button>
+                    <div class="form-group">
+                        <label id="element-stroke-color-label">Couleur du contour</label>
+                        <select id="element-stroke-color">
+                            <option value="black">Noir</option>
+                            <option value="white">Blanc</option>
+                            <option value="red">Rouge</option>
+                            <option value="blue">Bleu</option>
+                            <option value="yellow">Jaune</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label id="element-stroke-width-label">Épaisseur du contour</label>
+                        <input type="number" id="element-stroke-width" min="1" max="10" value="2">
+                    </div>
                 </div>
+                
+                <button id="add-element">Ajouter</button>
+                
+                <div id="elements-list"></div>
             </div>
         </div>
         
         <div class="preview">
             <h2 id="preview-label">Aperçu</h2>
+            
             <div class="grid-toggle">
                 <input type="checkbox" id="show-grid">
                 <label for="show-grid" id="show-grid-label">Afficher la grille</label>
             </div>
+            
             <div class="preview-container">
-                <svg id="icon-preview" width="150" height="150" viewBox="0 0 100 100"></svg>
+                <div id="icon-preview"></div>
             </div>
             
-            <textarea id="icon-code" class="icon-code" placeholder="Code de l'icône" readonly></textarea>
-            
-            <div class="storage-buttons">
+            <div class="export-options">
                 <button id="export-svg">Exporter SVG</button>
+                <button id="export-png">Exporter PNG</button>
+                <div class="grid-toggle">
+                    <input type="checkbox" id="transparent-bg">
+                    <label for="transparent-bg" id="transparent-bg-label">Fond transparent</label>
+                </div>
+            </div>
+            
+            <textarea id="icon-code" class="icon-code" placeholder="Code de l'icône"></textarea>
+            
+            <div class="storage-buttons">
                 <button id="save-icon">Sauvegarder</button>
+                <button id="load-icon">Charger</button>
             </div>
             
             <div class="storage-buttons">
-                <button id="load-icon">Charger</button>
                 <button id="export-json">Exporter JSON</button>
                 <button id="import-json">Importer JSON</button>
             </div>
             
             <h2 id="saved-icons-label">Icônes sauvegardées</h2>
-            <div id="saved-icons-list" class="saved-icons">
-                <!-- Les icônes sauvegardées seront affichées ici -->
+            <div class="saved-icons">
+                <div id="saved-icons-list"></div>
             </div>
         </div>
     </div>

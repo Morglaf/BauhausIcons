@@ -12,11 +12,21 @@ let baseRoundnessSlider;
 let baseRoundnessValue;
 let baseRotationSlider;
 let baseRotationValue;
+let baseColorSelect;
+let baseStrokeColorSelect;
+let baseStrokeWidthInput;
+let baseHasStrokeCheckbox;
 let elementTypeSelect;
+let elementColorSelect;
+let elementStrokeColorSelect;
+let elementStrokeWidthInput;
+let elementHasStrokeCheckbox;
 let addElementBtn;
 let elementsList;
 let iconPreview;
 let exportSvgBtn;
+let exportPngBtn;
+let transparentBgCheckbox;
 let iconCodeInput;
 let saveIconBtn;
 let loadIconBtn;
@@ -33,11 +43,21 @@ function initDOMReferences() {
     baseRoundnessValue = document.getElementById('base-roundness-value');
     baseRotationSlider = document.getElementById('base-rotation');
     baseRotationValue = document.getElementById('base-rotation-value');
+    baseColorSelect = document.getElementById('base-color');
+    baseStrokeColorSelect = document.getElementById('base-stroke-color');
+    baseStrokeWidthInput = document.getElementById('base-stroke-width');
+    baseHasStrokeCheckbox = document.getElementById('base-has-stroke');
     elementTypeSelect = document.getElementById('element-type');
+    elementColorSelect = document.getElementById('element-color');
+    elementStrokeColorSelect = document.getElementById('element-stroke-color');
+    elementStrokeWidthInput = document.getElementById('element-stroke-width');
+    elementHasStrokeCheckbox = document.getElementById('element-has-stroke');
     addElementBtn = document.getElementById('add-element');
     elementsList = document.getElementById('elements-list');
     iconPreview = document.getElementById('icon-preview');
     exportSvgBtn = document.getElementById('export-svg');
+    exportPngBtn = document.getElementById('export-png');
+    transparentBgCheckbox = document.getElementById('transparent-bg');
     iconCodeInput = document.getElementById('icon-code');
     saveIconBtn = document.getElementById('save-icon');
     loadIconBtn = document.getElementById('load-icon');
@@ -141,7 +161,46 @@ function renderElementsList(elements, updateCallback, removeCallback) {
                     <span>${element.roundness || 0}%</span>
                 </div>
             </div>
+            <div class="compact-row">
+                <div>
+                    <label>${getTranslation('elementColor')}</label>
+                    <select onchange="window.updateElementProperty(${element.id}, 'color', this.value)">
+                        <option value="black" ${element.color === 'black' ? 'selected' : ''}>${getTranslation('black')}</option>
+                        <option value="white" ${element.color === 'white' ? 'selected' : ''}>${getTranslation('white')}</option>
+                        <option value="red" ${element.color === 'red' ? 'selected' : ''}>${getTranslation('red')}</option>
+                        <option value="blue" ${element.color === 'blue' ? 'selected' : ''}>${getTranslation('blue')}</option>
+                        <option value="yellow" ${element.color === 'yellow' ? 'selected' : ''}>${getTranslation('yellow')}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="stroke-controls">
+                <div class="compact-row">
+                    <div>
+                        <label>${getTranslation('hasStroke')}</label>
+                        <input type="checkbox" ${element.hasStroke ? 'checked' : ''} 
+                               onchange="window.updateElementProperty(${element.id}, 'hasStroke', this.checked)">
+                    </div>
+                </div>
+                <div class="compact-row">
+                    <div>
+                        <label>${getTranslation('strokeColor')}</label>
+                        <select onchange="window.updateElementProperty(${element.id}, 'strokeColor', this.value)">
+                            <option value="black" ${element.strokeColor === 'black' ? 'selected' : ''}>${getTranslation('black')}</option>
+                            <option value="white" ${element.strokeColor === 'white' ? 'selected' : ''}>${getTranslation('white')}</option>
+                            <option value="red" ${element.strokeColor === 'red' ? 'selected' : ''}>${getTranslation('red')}</option>
+                            <option value="blue" ${element.strokeColor === 'blue' ? 'selected' : ''}>${getTranslation('blue')}</option>
+                            <option value="yellow" ${element.strokeColor === 'yellow' ? 'selected' : ''}>${getTranslation('yellow')}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>${getTranslation('strokeWidth')}</label>
+                        <input type="number" min="1" max="10" value="${element.strokeWidth || 2}" 
+                               onchange="window.updateElementProperty(${element.id}, 'strokeWidth', this.value)">
+                    </div>
+                </div>
+            </div>
             <div class="element-controls">
+                <button onclick="window.duplicateElement(${element.id});">${getTranslation('duplicate')}</button>
                 <button onclick="window.removeElement(${element.id});">${getTranslation('remove')}</button>
             </div>
         `;
@@ -164,7 +223,8 @@ function createIconPreview(iconCode, size = 40) {
     svg.style.backgroundColor = 'white'; // Toujours blanc même en mode sombre
     
     // Ajouter la forme de base
-    addBaseShape(svg, iconData.baseShape, iconData.baseRoundness, iconData.baseRotation);
+    addBaseShape(svg, iconData.baseShape, iconData.baseRoundness, iconData.baseRotation, 
+                iconData.baseColor, iconData.strokeColor, iconData.strokeWidth, iconData.hasStroke);
     
     // Ajouter les éléments intérieurs
     iconData.elements.forEach(element => {
@@ -238,11 +298,11 @@ function renderSavedIcons(loadCallback) {
 }
 
 // Gérer le clic sur le bouton de sauvegarde
-function handleSaveIcon(baseShape, baseRoundness, baseRotation, elements) {
+function handleSaveIcon(baseShape, baseRoundness, baseRotation, elements, baseColor, strokeColor, strokeWidth, hasStroke) {
     const name = prompt(getTranslation('iconNamePrompt'));
     if (!name) return;
     
-    const iconCode = generateIconCode(baseShape, baseRoundness, baseRotation, elements);
+    const iconCode = generateIconCode(baseShape, baseRoundness, baseRotation, elements, baseColor, strokeColor, strokeWidth, hasStroke);
     saveIcon(name, iconCode);
     renderSavedIcons();
 }
@@ -291,8 +351,8 @@ function handleImportJSON() {
 }
 
 // Mettre à jour le code de l'icône dans l'interface
-function updateIconCode(baseShape, baseRoundness, baseRotation, elements) {
-    const code = generateIconCode(baseShape, baseRoundness, baseRotation, elements);
+function updateIconCode(baseShape, baseRoundness, baseRotation, elements, baseColor, strokeColor, strokeWidth, hasStroke) {
+    const code = generateIconCode(baseShape, baseRoundness, baseRotation, elements, baseColor, strokeColor, strokeWidth, hasStroke);
     iconCodeInput.value = code;
 }
 
@@ -377,17 +437,29 @@ function translateUI() {
     document.getElementById('base-shape-label').textContent = getTranslation('baseShape');
     document.getElementById('base-roundness-label').textContent = getTranslation('roundness') + ':';
     document.getElementById('base-rotation-label').textContent = getTranslation('baseRotation') + ':';
+    document.getElementById('base-color-label').textContent = getTranslation('baseColor') + ':';
+    document.getElementById('base-stroke-color-label').textContent = getTranslation('strokeColor') + ':';
+    document.getElementById('base-stroke-width-label').textContent = getTranslation('strokeWidth') + ':';
+    document.getElementById('base-has-stroke-label').textContent = getTranslation('hasStroke');
     
     // Labels des éléments intérieurs
     document.getElementById('inner-elements-label').textContent = getTranslation('innerElements');
     document.getElementById('element-type-label').textContent = getTranslation('elementType');
+    document.getElementById('element-color-label').textContent = getTranslation('elementColor') + ':';
+    document.getElementById('element-stroke-color-label').textContent = getTranslation('strokeColor') + ':';
+    document.getElementById('element-stroke-width-label').textContent = getTranslation('strokeWidth') + ':';
+    document.getElementById('element-has-stroke-label').textContent = getTranslation('hasStroke');
     
     // Label de la grille
     document.getElementById('show-grid-label').textContent = getTranslation('showGrid');
     
+    // Label du fond transparent
+    document.getElementById('transparent-bg-label').textContent = getTranslation('transparentBg');
+    
     // Boutons
     document.getElementById('add-element').textContent = getTranslation('add');
     document.getElementById('export-svg').textContent = getTranslation('exportSvg');
+    document.getElementById('export-png').textContent = getTranslation('exportPng');
     document.getElementById('save-icon').textContent = getTranslation('save');
     document.getElementById('load-icon').textContent = getTranslation('load');
     document.getElementById('export-json').textContent = getTranslation('exportJson');
@@ -400,6 +472,10 @@ function translateUI() {
     // Options des sélecteurs
     translateSelectOptions(baseShapeSelect);
     translateSelectOptions(elementTypeSelect);
+    translateSelectOptions(baseColorSelect);
+    translateSelectOptions(elementColorSelect);
+    translateSelectOptions(baseStrokeColorSelect);
+    translateSelectOptions(elementStrokeColorSelect);
     
     // Placeholder du code
     iconCodeInput.placeholder = getTranslation('iconCode');
@@ -414,6 +490,57 @@ function translateSelectOptions(selectElement) {
     });
 }
 
+// Exporter l'icône au format PNG
+function exportPNG(svg, transparent = false) {
+    // Créer un canvas temporaire
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const size = 500; // Taille de l'image exportée
+    
+    canvas.width = size;
+    canvas.height = size;
+    
+    // Remplir le fond si non transparent
+    if (!transparent) {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, size, size);
+    }
+    
+    // Convertir le SVG en image
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+    const url = URL.createObjectURL(svgBlob);
+    
+    const img = new Image();
+    img.onload = function() {
+        ctx.drawImage(img, 0, 0, size, size);
+        URL.revokeObjectURL(url);
+        
+        // Télécharger l'image PNG
+        const pngUrl = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = pngUrl;
+        a.download = 'bauhaus_icon.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+    img.src = url;
+}
+
+// Dupliquer un élément
+function duplicateElement(element) {
+    // Créer une copie de l'élément avec un nouvel ID
+    const duplicate = { ...element };
+    delete duplicate.id; // L'ID sera attribué par l'appelant
+    
+    // Décaler légèrement la position pour distinguer la copie
+    duplicate.x = Math.min(100, duplicate.x + 10);
+    duplicate.y = Math.min(100, duplicate.y + 10);
+    
+    return duplicate;
+}
+
 // Exporter les fonctions
 export {
     initDOMReferences,
@@ -426,6 +553,8 @@ export {
     handleImportJSON,
     updateIconCode,
     createIconPreview,
+    exportPNG,
+    duplicateElement,
     toggleTheme,
     initTheme,
     initLanguage,

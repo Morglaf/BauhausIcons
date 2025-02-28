@@ -52,42 +52,40 @@ function applyRotation(element, rotation, centerX = 50, centerY = 50) {
     }
 }
 
-// Ajouter la forme de base au SVG
-function addBaseShape(iconPreview, type, roundness, rotation = 0) {
-    let shape;
+// Ajouter une forme de base au SVG
+function addBaseShape(svg, shape, roundness = 0, rotation = 0, color = 'black', strokeColor = 'black', strokeWidth = 2, hasStroke = true) {
+    const baseElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    baseElement.setAttribute('transform', `rotate(${rotation}, 50, 50)`);
     
-    switch (type) {
-        case 'circle':
-            shape = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            shape.setAttribute('cx', '50');
-            shape.setAttribute('cy', '50');
-            shape.setAttribute('r', '40');
-            shape.setAttribute('stroke', 'black');
-            shape.setAttribute('stroke-width', '2');
-            shape.setAttribute('fill', 'white');
+    let shapeElement;
+    
+    switch (shape) {
+        case 'square':
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            shapeElement.setAttribute('x', '10');
+            shapeElement.setAttribute('y', '10');
+            shapeElement.setAttribute('width', '80');
+            shapeElement.setAttribute('height', '80');
+            shapeElement.setAttribute('rx', roundness ? roundness / 2 : 0);
+            shapeElement.setAttribute('ry', roundness ? roundness / 2 : 0);
             break;
             
-        case 'square':
-            shape = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            shape.setAttribute('x', '10');
-            shape.setAttribute('y', '10');
-            shape.setAttribute('width', '80');
-            shape.setAttribute('height', '80');
-            shape.setAttribute('stroke', 'black');
-            shape.setAttribute('stroke-width', '2');
-            shape.setAttribute('fill', 'white');
+        case 'circle':
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            shapeElement.setAttribute('cx', '50');
+            shapeElement.setAttribute('cy', '50');
+            shapeElement.setAttribute('r', '40');
+            break;
             
-            if (roundness > 0) {
-                const radius = roundness * 0.4; // 40% de la valeur d'arrondi
-                shape.setAttribute('rx', radius);
-                shape.setAttribute('ry', radius);
-            }
+        case 'triangle':
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            shapeElement.setAttribute('points', '50,10 90,90 10,90');
             break;
             
         case 'diamond':
             if (roundness > 0) {
                 // Pour un losange arrondi, on utilise un path
-                shape = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 const radius = roundness * 0.2; // 20% de la valeur d'arrondi
                 const path = createRoundedPolygonPath([
                     [50, 10],
@@ -95,70 +93,17 @@ function addBaseShape(iconPreview, type, roundness, rotation = 0) {
                     [50, 90],
                     [10, 50]
                 ], radius);
-                shape.setAttribute('d', path);
+                shapeElement.setAttribute('d', path);
             } else {
-                shape = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-                shape.setAttribute('points', '50,10 90,50 50,90 10,50');
+                shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                shapeElement.setAttribute('points', '50,10 90,50 50,90 10,50');
             }
-            shape.setAttribute('stroke', 'black');
-            shape.setAttribute('stroke-width', '2');
-            shape.setAttribute('fill', 'white');
-            break;
-            
-        case 'triangle':
-            if (roundness > 0) {
-                // Pour un triangle arrondi, on utilise un path
-                shape = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                const radius = roundness * 0.2; // 20% de la valeur d'arrondi
-                const path = createRoundedPolygonPath([
-                    [50, 10],
-                    [90, 90],
-                    [10, 90]
-                ], radius);
-                shape.setAttribute('d', path);
-            } else {
-                shape = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-                shape.setAttribute('points', '50,10 90,90 10,90');
-            }
-            shape.setAttribute('stroke', 'black');
-            shape.setAttribute('stroke-width', '2');
-            shape.setAttribute('fill', 'white');
-            break;
-            
-        case 'cross':
-            // Pour la croix, nous utilisons un groupe avec deux rectangles
-            shape = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-            
-            const horizontal = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            horizontal.setAttribute('x', '10');
-            horizontal.setAttribute('y', '45');
-            horizontal.setAttribute('width', '80');
-            horizontal.setAttribute('height', '10');
-            horizontal.setAttribute('fill', 'black');
-            
-            const vertical = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            vertical.setAttribute('x', '45');
-            vertical.setAttribute('y', '10');
-            vertical.setAttribute('width', '10');
-            vertical.setAttribute('height', '80');
-            vertical.setAttribute('fill', 'black');
-            
-            if (roundness > 0) {
-                const radius = roundness * 0.2; // 20% de la valeur d'arrondi
-                horizontal.setAttribute('rx', radius);
-                horizontal.setAttribute('ry', radius);
-                vertical.setAttribute('rx', radius);
-                vertical.setAttribute('ry', radius);
-            }
-            
-            shape.appendChild(horizontal);
-            shape.appendChild(vertical);
             break;
             
         case 'hexagon':
             if (roundness > 0) {
                 // Pour un hexagone arrondi, on utilise un path
-                shape = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 const radius = roundness * 0.2; // 20% de la valeur d'arrondi
                 const path = createRoundedPolygonPath([
                     [50, 10],
@@ -168,20 +113,17 @@ function addBaseShape(iconPreview, type, roundness, rotation = 0) {
                     [15, 75],
                     [15, 25]
                 ], radius);
-                shape.setAttribute('d', path);
+                shapeElement.setAttribute('d', path);
             } else {
-                shape = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-                shape.setAttribute('points', '50,10 85,25 85,75 50,90 15,75 15,25');
+                shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                shapeElement.setAttribute('points', '50,10 85,25 85,75 50,90 15,75 15,25');
             }
-            shape.setAttribute('stroke', 'black');
-            shape.setAttribute('stroke-width', '2');
-            shape.setAttribute('fill', 'white');
             break;
             
         case 'star':
             if (roundness > 0) {
                 // Pour une étoile arrondie, on utilise un path
-                shape = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 const radius = roundness * 0.1; // 10% de la valeur d'arrondi
                 const path = createRoundedPolygonPath([
                     [50, 10],
@@ -195,205 +137,236 @@ function addBaseShape(iconPreview, type, roundness, rotation = 0) {
                     [10, 35],
                     [39, 35]
                 ], radius);
-                shape.setAttribute('d', path);
+                shapeElement.setAttribute('d', path);
             } else {
-                shape = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-                shape.setAttribute('points', '50,10 61,35 90,35 65,55 75,80 50,65 25,80 35,55 10,35 39,35');
+                shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                shapeElement.setAttribute('points', '50,10 61,35 90,35 65,55 75,80 50,65 25,80 35,55 10,35 39,35');
             }
-            shape.setAttribute('stroke', 'black');
-            shape.setAttribute('stroke-width', '2');
-            shape.setAttribute('fill', 'white');
             break;
             
         case 'semicircle':
-            shape = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            shape.setAttribute('d', 'M10,50 A40,40 0 0,1 90,50 L90,50 L10,50 Z');
-            shape.setAttribute('stroke', 'black');
-            shape.setAttribute('stroke-width', '2');
-            shape.setAttribute('fill', 'white');
-            break;
-    }
-    
-    // Appliquer la rotation à la forme de base
-    applyRotation(shape, rotation);
-    
-    iconPreview.appendChild(shape);
-}
-
-// Ajouter un élément intérieur au SVG
-function addInnerElement(iconPreview, element) {
-    let shape;
-    
-    // Calculer les dimensions réelles en pixels (basées sur le pourcentage)
-    const width = element.width * 0.8; // 80% de la largeur totale
-    const height = element.height * 0.8; // 80% de la hauteur totale
-    
-    // Position centrée basée sur les pourcentages
-    const x = element.x;
-    const y = element.y;
-    
-    // Valeur d'arrondi (si applicable)
-    const roundness = element.roundness || 0;
-    const radius = roundness * 0.2; // 20% de la valeur d'arrondi
-    
-    switch (element.type) {
-        case 'circle':
-            shape = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            shape.setAttribute('cx', x);
-            shape.setAttribute('cy', y);
-            shape.setAttribute('r', Math.min(width, height) / 2);
-            shape.setAttribute('fill', 'black');
-            break;
-            
-        case 'circleOutline':
-            shape = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            shape.setAttribute('cx', x);
-            shape.setAttribute('cy', y);
-            shape.setAttribute('r', Math.min(width, height) / 2);
-            shape.setAttribute('fill', 'white');
-            shape.setAttribute('stroke', 'black');
-            shape.setAttribute('stroke-width', '2');
-            break;
-            
-        case 'square':
-            shape = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            shape.setAttribute('x', x - width / 2);
-            shape.setAttribute('y', y - height / 2);
-            shape.setAttribute('width', width);
-            shape.setAttribute('height', height);
-            shape.setAttribute('fill', 'black');
-            
-            if (roundness > 0) {
-                shape.setAttribute('rx', radius);
-                shape.setAttribute('ry', radius);
-            }
-            break;
-            
-        case 'diamond':
-            if (roundness > 0) {
-                shape = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                const diamondPoints = [
-                    [x, y - height / 2],
-                    [x + width / 2, y],
-                    [x, y + height / 2],
-                    [x - width / 2, y]
-                ];
-                const path = createRoundedPolygonPath(diamondPoints, radius);
-                shape.setAttribute('d', path);
-            } else {
-                shape = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-                const diamondPoints = [
-                    [x, y - height / 2],
-                    [x + width / 2, y],
-                    [x, y + height / 2],
-                    [x - width / 2, y]
-                ];
-                shape.setAttribute('points', diamondPoints.map(p => p.join(',')).join(' '));
-            }
-            shape.setAttribute('fill', 'black');
-            break;
-            
-        case 'triangle':
-            if (roundness > 0) {
-                shape = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                const trianglePoints = [
-                    [x, y - height / 2],
-                    [x + width / 2, y + height / 2],
-                    [x - width / 2, y + height / 2]
-                ];
-                const path = createRoundedPolygonPath(trianglePoints, radius);
-                shape.setAttribute('d', path);
-            } else {
-                shape = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-                const trianglePoints = [
-                    [x, y - height / 2],
-                    [x + width / 2, y + height / 2],
-                    [x - width / 2, y + height / 2]
-                ];
-                shape.setAttribute('points', trianglePoints.map(p => p.join(',')).join(' '));
-            }
-            shape.setAttribute('fill', 'black');
-            break;
-            
-        case 'line':
-            shape = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            shape.setAttribute('x', x - width / 2);
-            shape.setAttribute('y', y - height / 10); // Ligne fine
-            shape.setAttribute('width', width);
-            shape.setAttribute('height', height / 5);
-            shape.setAttribute('fill', 'black');
-            
-            if (roundness > 0) {
-                shape.setAttribute('rx', radius);
-                shape.setAttribute('ry', radius);
-            }
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            shapeElement.setAttribute('d', 'M10,50 A40,40 0 0,1 90,50 L90,50 L10,50 Z');
             break;
             
         case 'cross':
-            shape = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            // Pour la croix, nous utilisons un groupe avec deux rectangles
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             
-            const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            hLine.setAttribute('x', x - width / 2);
-            hLine.setAttribute('y', y - height / 10);
-            hLine.setAttribute('width', width);
-            hLine.setAttribute('height', height / 5);
-            hLine.setAttribute('fill', 'black');
+            const horizontal = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            horizontal.setAttribute('x', '10');
+            horizontal.setAttribute('y', '45');
+            horizontal.setAttribute('width', '80');
+            horizontal.setAttribute('height', '10');
+            horizontal.setAttribute('fill', color);
             
-            const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            vLine.setAttribute('x', x - width / 10);
-            vLine.setAttribute('y', y - height / 2);
-            vLine.setAttribute('width', width / 5);
-            vLine.setAttribute('height', height);
-            vLine.setAttribute('fill', 'black');
+            const vertical = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            vertical.setAttribute('x', '45');
+            vertical.setAttribute('y', '10');
+            vertical.setAttribute('width', '10');
+            vertical.setAttribute('height', '80');
+            vertical.setAttribute('fill', color);
             
             if (roundness > 0) {
+                const radius = roundness * 0.2; // 20% de la valeur d'arrondi
+                horizontal.setAttribute('rx', radius);
+                horizontal.setAttribute('ry', radius);
+                vertical.setAttribute('rx', radius);
+                vertical.setAttribute('ry', radius);
+            }
+            
+            if (hasStroke) {
+                horizontal.setAttribute('stroke', strokeColor);
+                horizontal.setAttribute('stroke-width', strokeWidth);
+                vertical.setAttribute('stroke', strokeColor);
+                vertical.setAttribute('stroke-width', strokeWidth);
+            }
+            
+            shapeElement.appendChild(horizontal);
+            shapeElement.appendChild(vertical);
+            
+            baseElement.appendChild(shapeElement);
+            svg.appendChild(baseElement);
+            return; // Sortir de la fonction car nous avons déjà ajouté la forme
+    }
+    
+    // Appliquer la couleur de remplissage
+    shapeElement.setAttribute('fill', color);
+    
+    // Appliquer le contour si nécessaire
+    if (hasStroke) {
+        shapeElement.setAttribute('stroke', strokeColor);
+        shapeElement.setAttribute('stroke-width', strokeWidth);
+    }
+    
+    baseElement.appendChild(shapeElement);
+    svg.appendChild(baseElement);
+}
+
+// Ajouter un élément intérieur au SVG
+function addInnerElement(svg, element) {
+    const { type, x, y, width, height, rotation, roundness = 0, color = 'black', strokeColor = 'black', strokeWidth = 2, hasStroke = false } = element;
+    
+    // Calculer les coordonnées et dimensions
+    const centerX = x;
+    const centerY = y;
+    const elementWidth = width;
+    const elementHeight = height;
+    
+    // Créer le groupe pour l'élément
+    const elementGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    elementGroup.setAttribute('transform', `rotate(${rotation}, ${centerX}, ${centerY})`);
+    
+    let shapeElement;
+    
+    switch (type) {
+        case 'square':
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            shapeElement.setAttribute('x', centerX - elementWidth / 2);
+            shapeElement.setAttribute('y', centerY - elementHeight / 2);
+            shapeElement.setAttribute('width', elementWidth);
+            shapeElement.setAttribute('height', elementHeight);
+            shapeElement.setAttribute('rx', roundness ? roundness / 2 : 0);
+            shapeElement.setAttribute('ry', roundness ? roundness / 2 : 0);
+            break;
+            
+        case 'circle':
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            shapeElement.setAttribute('cx', centerX);
+            shapeElement.setAttribute('cy', centerY);
+            shapeElement.setAttribute('r', Math.min(elementWidth, elementHeight) / 2);
+            break;
+            
+        case 'circleOutline':
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            shapeElement.setAttribute('cx', centerX);
+            shapeElement.setAttribute('cy', centerY);
+            shapeElement.setAttribute('r', Math.min(elementWidth, elementHeight) / 2);
+            shapeElement.setAttribute('fill', 'white');
+            shapeElement.setAttribute('stroke', color);
+            shapeElement.setAttribute('stroke-width', '2');
+            break;
+            
+        case 'triangle':
+            const halfWidth = elementWidth / 2;
+            const halfHeight = elementHeight / 2;
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            shapeElement.setAttribute('points', `
+                ${centerX},${centerY - halfHeight}
+                ${centerX + halfWidth},${centerY + halfHeight}
+                ${centerX - halfWidth},${centerY + halfHeight}
+            `);
+            break;
+            
+        case 'diamond':
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            const diamondPoints = [
+                [centerX, centerY - elementHeight / 2],
+                [centerX + elementWidth / 2, centerY],
+                [centerX, centerY + elementHeight / 2],
+                [centerX - elementWidth / 2, centerY]
+            ];
+            shapeElement.setAttribute('points', diamondPoints.map(p => p.join(',')).join(' '));
+            break;
+            
+        case 'line':
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            shapeElement.setAttribute('x1', centerX - elementWidth / 2);
+            shapeElement.setAttribute('y1', centerY);
+            shapeElement.setAttribute('x2', centerX + elementWidth / 2);
+            shapeElement.setAttribute('y2', centerY);
+            shapeElement.setAttribute('stroke', color);
+            shapeElement.setAttribute('stroke-width', Math.max(1, elementHeight / 10));
+            break;
+            
+        case 'arc':
+            const radius = Math.min(elementWidth, elementHeight) / 2;
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            shapeElement.setAttribute('d', `M ${centerX - radius} ${centerY} A ${radius} ${radius} 0 0 1 ${centerX + radius} ${centerY}`);
+            shapeElement.setAttribute('fill', 'none');
+            shapeElement.setAttribute('stroke', color);
+            shapeElement.setAttribute('stroke-width', Math.max(1, elementHeight / 10));
+            break;
+            
+        case 'zigzag':
+            const zigWidth = elementWidth / 4;
+            const zigHeight = elementHeight / 2;
+            const startX = centerX - elementWidth / 2;
+            const startY = centerY;
+            
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            shapeElement.setAttribute('d', `
+                M ${startX} ${startY}
+                L ${startX + zigWidth} ${startY - zigHeight}
+                L ${startX + zigWidth * 2} ${startY + zigHeight}
+                L ${startX + zigWidth * 3} ${startY - zigHeight}
+                L ${startX + zigWidth * 4} ${startY}
+            `);
+            shapeElement.setAttribute('fill', 'none');
+            shapeElement.setAttribute('stroke', color);
+            shapeElement.setAttribute('stroke-width', Math.max(1, elementHeight / 10));
+            break;
+            
+        case 'dot':
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            shapeElement.setAttribute('cx', centerX);
+            shapeElement.setAttribute('cy', centerY);
+            shapeElement.setAttribute('r', Math.min(elementWidth, elementHeight) / 4);
+            break;
+            
+        case 'cross':
+            shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            
+            const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            hLine.setAttribute('x', centerX - elementWidth / 2);
+            hLine.setAttribute('y', centerY - elementHeight / 10);
+            hLine.setAttribute('width', elementWidth);
+            hLine.setAttribute('height', elementHeight / 5);
+            hLine.setAttribute('fill', color);
+            
+            const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            vLine.setAttribute('x', centerX - elementWidth / 10);
+            vLine.setAttribute('y', centerY - elementHeight / 2);
+            vLine.setAttribute('width', elementWidth / 5);
+            vLine.setAttribute('height', elementHeight);
+            vLine.setAttribute('fill', color);
+            
+            if (roundness > 0) {
+                const radius = roundness * 0.2;
                 hLine.setAttribute('rx', radius);
                 hLine.setAttribute('ry', radius);
                 vLine.setAttribute('rx', radius);
                 vLine.setAttribute('ry', radius);
             }
             
-            shape.appendChild(hLine);
-            shape.appendChild(vLine);
-            break;
+            if (hasStroke) {
+                hLine.setAttribute('stroke', strokeColor);
+                hLine.setAttribute('stroke-width', strokeWidth);
+                vLine.setAttribute('stroke', strokeColor);
+                vLine.setAttribute('stroke-width', strokeWidth);
+            }
             
-        case 'dot':
-            shape = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            shape.setAttribute('cx', x);
-            shape.setAttribute('cy', y);
-            shape.setAttribute('r', Math.min(width, height) / 4); // Plus petit que le cercle standard
-            shape.setAttribute('fill', 'black');
-            break;
+            shapeElement.appendChild(hLine);
+            shapeElement.appendChild(vLine);
             
-        case 'arc':
-            shape = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            const arcRadius = Math.min(width, height) / 2;
-            shape.setAttribute('d', `M${x - arcRadius},${y} A${arcRadius},${arcRadius} 0 0,1 ${x + arcRadius},${y}`);
-            shape.setAttribute('stroke', 'black');
-            shape.setAttribute('stroke-width', height / 10);
-            shape.setAttribute('fill', 'none');
-            break;
-            
-        case 'zigzag':
-            shape = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-            const zigzagPoints = [
-                [x - width / 2, y],
-                [x - width / 4, y - height / 3],
-                [x, y],
-                [x + width / 4, y - height / 3],
-                [x + width / 2, y]
-            ];
-            shape.setAttribute('points', zigzagPoints.map(p => p.join(',')).join(' '));
-            shape.setAttribute('stroke', 'black');
-            shape.setAttribute('stroke-width', height / 10);
-            shape.setAttribute('fill', 'none');
-            break;
+            elementGroup.appendChild(shapeElement);
+            svg.appendChild(elementGroup);
+            return; // Sortir de la fonction car nous avons déjà ajouté l'élément
     }
     
-    // Appliquer la rotation à l'élément
-    applyRotation(shape, element.rotation, x, y);
+    // Appliquer la couleur si ce n'est pas déjà fait
+    if (type !== 'line' && type !== 'arc' && type !== 'zigzag' && type !== 'circleOutline') {
+        shapeElement.setAttribute('fill', color);
+    }
     
-    iconPreview.appendChild(shape);
+    // Ajouter un contour si nécessaire
+    if (hasStroke && type !== 'line' && type !== 'arc' && type !== 'zigzag' && type !== 'circleOutline') {
+        shapeElement.setAttribute('stroke', strokeColor);
+        shapeElement.setAttribute('stroke-width', strokeWidth);
+    }
+    
+    elementGroup.appendChild(shapeElement);
+    svg.appendChild(elementGroup);
 }
 
 // Exporter les fonctions

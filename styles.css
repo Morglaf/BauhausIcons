@@ -57,6 +57,10 @@ h2 {
     flex-direction: column;
     align-items: center;
     transition: background-color 0.3s, border-color 0.3s;
+    position: sticky;
+    top: 15px;
+    max-height: calc(100vh - 30px);
+    overflow-y: auto;
 }
 
 .dark-mode .preview {
@@ -118,8 +122,6 @@ h2 {
     width: auto;
     margin: 0;
 }
-
-
 
 .form-group {
     margin-bottom: 10px;
@@ -203,6 +205,22 @@ button:hover {
 
 .element-controls button {
     flex: 1;
+}
+
+.element-controls button:first-child {
+    background: #007AFF;
+}
+
+.dark-mode .element-controls button:first-child {
+    background: #0055AA;
+}
+
+.element-controls button:first-child:hover {
+    background: #0055AA;
+}
+
+.dark-mode .element-controls button:first-child:hover {
+    background: #0077CC;
 }
 
 .remove-btn {
@@ -368,4 +386,94 @@ button:hover {
     background-color: #444;
     border-color: #666;
     color: #eee;
+}
+
+.export-options {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.export-options button {
+    margin-bottom: 5px;
+}
+
+/* Styles pour les couleurs Bauhaus */
+select[id$="-color"] {
+    background-color: white;
+    color: black;
+}
+
+select[id$="-color"] option[value="black"] {
+    background-color: black;
+    color: white;
+}
+
+select[id$="-color"] option[value="white"] {
+    background-color: white;
+    color: black;
+}
+
+select[id$="-color"] option[value="red"] {
+    background-color: #FF3B30;
+    color: white;
+}
+
+select[id$="-color"] option[value="blue"] {
+    background-color: #007AFF;
+    color: white;
+}
+
+select[id$="-color"] option[value="yellow"] {
+    background-color: #FFCC00;
+    color: black;
+}
+
+.dark-mode select[id$="-color"] {
+    background-color: #444;
+    color: white;
+}
+
+.stroke-controls {
+    border: 1px solid #eee;
+    padding: 8px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    border-radius: 3px;
+}
+
+.dark-mode .stroke-controls {
+    border-color: #555;
+    background-color: #444;
+}
+
+.stroke-controls .form-group {
+    margin-bottom: 5px;
+}
+
+.stroke-controls .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.stroke-controls input[type="checkbox"] {
+    width: auto;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+.stroke-controls input[type="number"] {
+    width: 60px;
+}
+
+/* Styles pour les écrans mobiles */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .preview {
+        position: static;
+        max-height: none;
+    }
 } 

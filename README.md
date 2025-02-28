@@ -97,12 +97,3 @@ Cette application utilise:
 Créé avec passion pour les amateurs de design Bauhaus. 
 
 
-## roadmap :
-
-Palette de couleurs personnalisable :
-Ajouter la possibilité de choisir des couleurs pour les formes et les éléments
-Respecter l'esthétique Bauhaus avec une palette limitée (rouge, jaune, bleu, noir)
-
-Duplication d'éléments
-
-Exportations Format PNG avec transparence

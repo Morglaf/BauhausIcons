@@ -35,7 +35,7 @@ const translations = {
         showGrid: "Afficher la grille",
         // Formes
         circle: "Rond",
-        circleOutline: "Cercle",
+        circleOutline: "Cercle contour",
         square: "Carré",
         diamond: "Losange",
         triangle: "Triangle",
@@ -48,6 +48,24 @@ const translations = {
         dot: "Point",
         arc: "Arc",
         zigzag: "Zigzag",
+        // Nouvelles traductions pour les couleurs
+        colors: "Couleurs",
+        baseColor: "Couleur de base",
+        elementColor: "Couleur de l'élément",
+        black: "Noir",
+        white: "Blanc",
+        red: "Rouge",
+        blue: "Bleu",
+        yellow: "Jaune",
+        // Duplication d'éléments
+        duplicate: "Dupliquer",
+        // Exportation PNG
+        exportPng: "Exporter PNG",
+        transparentBg: "Fond transparent",
+        // Contours
+        hasStroke: "Contour",
+        strokeColor: "Couleur du contour",
+        strokeWidth: "Épaisseur du contour",
         // Messages
         iconNamePrompt: "Nom de l'icône:",
         invalidCode: "Code d'icône invalide",
@@ -97,6 +115,24 @@ const translations = {
         dot: "Dot",
         arc: "Arc",
         zigzag: "Zigzag",
+        // Nouvelles traductions pour les couleurs
+        colors: "Colors",
+        baseColor: "Base Color",
+        elementColor: "Element Color",
+        black: "Black",
+        white: "White",
+        red: "Red",
+        blue: "Blue",
+        yellow: "Yellow",
+        // Duplication d'éléments
+        duplicate: "Duplicate",
+        // Exportation PNG
+        exportPng: "Export PNG",
+        transparentBg: "Transparent Background",
+        // Contours
+        hasStroke: "Stroke",
+        strokeColor: "Stroke Color",
+        strokeWidth: "Stroke Width",
         // Messages
         iconNamePrompt: "Icon name:",
         invalidCode: "Invalid icon code",
@@ -146,6 +182,24 @@ const translations = {
         dot: "Punkt",
         arc: "Bogen",
         zigzag: "Zickzack",
+        // Nouvelles traductions pour les couleurs
+        colors: "Farben",
+        baseColor: "Grundfarbe",
+        elementColor: "Elementfarbe",
+        black: "Schwarz",
+        white: "Weiß",
+        red: "Rot",
+        blue: "Blau",
+        yellow: "Gelb",
+        // Duplication d'éléments
+        duplicate: "Duplizieren",
+        // Exportation PNG
+        exportPng: "PNG exportieren",
+        transparentBg: "Transparenter Hintergrund",
+        // Contours
+        hasStroke: "Umriss",
+        strokeColor: "Umrissfarbe",
+        strokeWidth: "Umrissbreite",
         // Nachrichten
         iconNamePrompt: "Symbolname:",
         invalidCode: "Ungültiger Symbol-Code",
@@ -195,6 +249,24 @@ const translations = {
         dot: "Punto",
         arc: "Arco",
         zigzag: "Zigzag",
+        // Nouvelles traductions pour les couleurs
+        colors: "Colores",
+        baseColor: "Color base",
+        elementColor: "Color del elemento",
+        black: "Negro",
+        white: "Blanco",
+        red: "Rojo",
+        blue: "Azul",
+        yellow: "Amarillo",
+        // Duplication d'éléments
+        duplicate: "Duplicar",
+        // Exportation PNG
+        exportPng: "Exportar PNG",
+        transparentBg: "Fondo transparente",
+        // Contours
+        hasStroke: "Contorno",
+        strokeColor: "Color del contorno",
+        strokeWidth: "Grosor del contorno",
         // Mensajes
         iconNamePrompt: "Nombre del icono:",
         invalidCode: "Código de icono inválido",
